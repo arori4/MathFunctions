@@ -10,7 +10,7 @@ public class Primes {
 	public static final int MAX_VALUE = 0;
 	public static final int MAX_COUNT = 1;
 
-	public long[] GeneratePrimes(long number, int genCondition, int algorithm) {
+	public static long[] GeneratePrimes(long number, int genCondition, int algorithm) {
 		if (algorithm == ROOT) {
 			return GeneratePrimesRoot(number, genCondition);
 		}
@@ -19,7 +19,7 @@ public class Primes {
 		return GeneratePrimesRoot(number, genCondition);
 	}
 
-	public boolean CheckIfPrime(long toCheck, int algorithm) {
+	public static boolean CheckIfPrime(long toCheck, int algorithm) {
 		if (algorithm == ROOT) {
 			return CheckIfPrimeRoot(toCheck);
 		}
@@ -37,7 +37,7 @@ public class Primes {
 	 * @param condition
 	 * @return
 	 */
-	private long[] GeneratePrimesRoot(long number, int condition) {
+	private static long[] GeneratePrimesRoot(long number, int condition) {
 		
 		// Create return list
 		long[] returnList;
@@ -108,7 +108,7 @@ public class Primes {
 	}
 
 
-	private boolean CheckIfPrimeRoot(long toCheck) {
+	private static boolean CheckIfPrimeRoot(long toCheck) {
 
 		long maxToCheck = (long)Math.sqrt(toCheck) + 1;
 		long[] primeList = new long[5000];
@@ -125,8 +125,13 @@ public class Primes {
 	 * @param toCheck
 	 * @return
 	 */
-	private boolean CheckIfPrimeSimple(long toCheck) {
+	private static boolean CheckIfPrimeSimple(long toCheck) {
 
+		// Check for 2
+		if (toCheck == 2) {
+			return true;
+		}
+		
 		// Check even numbers
 		if (toCheck % 2 == 0) {
 			return false;
