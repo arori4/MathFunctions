@@ -1,14 +1,12 @@
-import java.math.BigInteger;
-
 public class Factorial {
 
-	public static BigInteger factorial(BigInteger num) {
+	public static Number factorial(Number num) {
 		
-		BigInteger returnVal = new BigInteger("1");
+		Number returnVal = new Number("1");
 		
 		while (num.intValue() != 1) {
 			returnVal = returnVal.multiply(num);
-			num = num.subtract(new BigInteger("1"));
+			num = num.subtract(new Number("1"));
 		}
 		
 		return returnVal;

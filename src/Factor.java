@@ -23,7 +23,7 @@ public class Factor {
 		while (exponent.signum() > 0) {
 			if (exponent.testBit(0)) result = result.multiply(base);
 			base = base.multiply(base);
-			exponent = (Number) exponent.shiftRight(1);
+			exponent = exponent.shiftRight(1);
 		}
 		return result;
 	}

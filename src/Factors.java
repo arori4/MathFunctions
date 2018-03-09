@@ -1,4 +1,3 @@
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,11 +9,10 @@ public class Factors {
 	 * @param numberToFactor
 	 * @return
 	 */
-	public static List<FastFactor> factorNumberSimple(long numberToFactor) {
+	public static List<FastFactor> smallSimple(long numberToFactor) {
 
 		// Generate prime values up till half the value (smallest possible factor is 2)
-		long[] primeVals = Primes.GeneratePrimes(
-				numberToFactor / 3, Primes.MAX_VALUE, Primes.ROOT);
+		long[] primeVals = Primes.generateRoot(numberToFactor / 3, Primes.MAX_VALUE);
 		// Create list of factors
 		List<FastFactor> factors = new ArrayList<FastFactor>();
 
@@ -46,7 +44,7 @@ public class Factors {
 	}
 
 
-	public static List<FastFactor> factorNumberPrimeGenerateSmall(long numberToFactor) {
+	public static List<FastFactor> smallPrimeGen(long numberToFactor) {
 
 		// List exists for look-at-itself generation
 		List<Long> primeVals = new ArrayList<Long>();
@@ -131,7 +129,7 @@ public class Factors {
 	 * @param numberToFactor
 	 * @return
 	 */
-	public static List<Factor> factorFermat(Number numberToFactor) {
+	public static List<Factor> fermatSimple(Number numberToFactor) {
 
 		// Create list of factors
 		List<Factor> factors = new ArrayList<Factor>();
@@ -141,20 +139,20 @@ public class Factors {
 
 		// Create b^2
 		Number b2 = (a.multiply(a)).subtract(numberToFactor);
-		
+
 		// Create Ceiling
-		Number ceiling = fermatCeiling(a, bigIntSqRootCeil(b2));
+		Number ceiling = fermatCeiling(a, b2.sqRootCeil());
 		System.out.println("Ceiling of a: " + ceiling);
 		boolean hitCeiling = false;
 
 		// Guess and check up until a point. Try and find a B value that is a square.
-		while (isNumberSquare(b2) == false) {
-			
+		while (b2.isSquare() == false) {
+
 			a = a.add(Number.ONE);
 			b2 = (a.multiply(a)).subtract(numberToFactor);
 
 			// Compare a - b to the ceiling to see if we need to stop
-			if ((a.subtract(bigIntSqRootCeil(b2))).compareTo(ceiling) == 1) {
+			if ((a.subtract(b2.sqRootCeil()).compareTo(ceiling) == 1)) {
 				hitCeiling = true;
 				break;
 			}
@@ -162,17 +160,17 @@ public class Factors {
 
 		// If ceiling is hit, we fallback to brute force algorithm to find a prime
 		if (hitCeiling) {
-			return factorNumberPrimeGenerateT(numberToFactor, a.subtract(bigIntSqRootCeil(b2)));
+			return factorPrimeGenT(numberToFactor, a.subtract(b2.sqRootCeil()));
 		}
-		
+
 		// Find Factors based on number given
-		Number int1 = a.add(bigIntSqRootCeil(b2));
+		Number int1 = a.add(b2.sqRootCeil());
 		Factor factor1 = new Factor();
 		factor1.base = int1;
 		factor1.exponent = Number.ONE;
 		factors.add(factor1);
-		
-		Number int2 = a.subtract(bigIntSqRootCeil(b2));
+
+		Number int2 = a.subtract(b2.sqRootCeil());
 		Factor factor2 = new Factor();
 		factor2.base = int2;
 		factor2.exponent = Number.ONE;
@@ -183,17 +181,17 @@ public class Factors {
 
 	}
 
-	public static List<Factor> factorNumberPrimeGenerate(Number numberToFactor) {
-		return factorNumberPrimeGenerateT(numberToFactor, null);
+	public static List<Factor> primeGen(Number numberToFactor) {
+		return factorPrimeGenT(numberToFactor, null);
 	}
 
-	private static List<Factor> factorNumberPrimeGenerateT(
+	private static List<Factor> factorPrimeGenT(
 			Number numberToFactor, Number threshold) {
 
 		// List exists for look-at-itself generation
 		List<Number> primeVals = new ArrayList<Number>();
-		primeVals.add(Number.valueOf(2));
-		primeVals.add(Number.valueOf(3));
+		primeVals.add(Number.TWO);
+		primeVals.add(Number.THREE);
 		List<Factor> factors = new ArrayList<Factor>();
 
 		int index = 0;
@@ -225,7 +223,7 @@ public class Factors {
 			Number nextPrimeToCheck = currentPrime;
 
 			// Check whether we need to continue or not
-			if (nextPrimeToCheck.compareTo(bigIntSqRootCeil(numberToFactor)) == 1) {
+			if (nextPrimeToCheck.compareTo(numberToFactor.sqRootCeil()) == 1) {
 				break;
 			}
 			if (threshold != null && nextPrimeToCheck.compareTo(threshold) == 1) {
@@ -238,7 +236,7 @@ public class Factors {
 				boolean foundPrime = false;
 
 				while (foundPrime == false) {
-					nextPrimeToCheck = nextPrimeToCheck.add(Number.valueOf(2));
+					nextPrimeToCheck = nextPrimeToCheck.add(Number.TWO);
 
 					for (int inner = 0; inner < primeVals.size(); inner++) {
 						if (nextPrimeToCheck.mod(primeVals.get(inner)).equals(Number.ZERO)) {
@@ -269,13 +267,13 @@ public class Factors {
 
 	}
 
-	
-	private static BigInteger fermatCeiling(BigInteger a, BigInteger b) {
-		BigInteger difference = a.subtract(b);
 
-		return difference.multiply(BigInteger.valueOf(6)).divide(BigInteger.valueOf(5));
+	private static Number fermatCeiling(Number a, Number b) {
+		Number difference = a.subtract(b);
+
+		return difference.multiply(Number.SIX).divide(Number.FIVE);
 	}
-	
+
 
 
 

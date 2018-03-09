@@ -1,35 +1,21 @@
 
-public class Primes {
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 
-	// Algorithms
-	public static final int ROOT = 0;
-	public static final int SIMPLE = 1;
+public class Primes {
 
 	// Generate conditions
 	// This is a case where I wish I can pass in a comparison function.
 	public static final int MAX_VALUE = 0;
 	public static final int MAX_COUNT = 1;
-
-	public static long[] GeneratePrimes(long number, int genCondition, int algorithm) {
-		if (algorithm == ROOT) {
-			return GeneratePrimesRoot(number, genCondition);
-		}
-
-		// Fallback
-		return GeneratePrimesRoot(number, genCondition);
-	}
-
-	public static boolean CheckIfPrime(long toCheck, int algorithm) {
-		if (algorithm == ROOT) {
-			return CheckIfPrimeRoot(toCheck);
-		}
-		else if (algorithm == SIMPLE) {
-			return CheckIfPrimeSimple(toCheck);
-		}
-
-		return CheckIfPrimeRoot(toCheck);
-	}
-
+	
+	public static final int NUM_PRIME_FILES = 5;
+	public static final int NUM_PRIMES_PER_FILE = 1_000_000;
+	public static final int NUM_PRIMES = NUM_PRIME_FILES * NUM_PRIMES_PER_FILE;
+	
+	public static long[] arr_primes = new long[NUM_PRIMES];
 
 	/**
 	 * Generates primes with the root checkback method
@@ -37,8 +23,8 @@ public class Primes {
 	 * @param condition
 	 * @return
 	 */
-	private static long[] GeneratePrimesRoot(long number, int condition) {
-		
+	public static long[] generateRoot(long number, int condition) {
+
 		// Create return list
 		long[] returnList;
 		if (condition == MAX_VALUE) {
@@ -107,17 +93,6 @@ public class Primes {
 
 	}
 
-
-	private static boolean CheckIfPrimeRoot(long toCheck) {
-
-		long maxToCheck = (long)Math.sqrt(toCheck) + 1;
-		long[] primeList = new long[5000];
-
-
-		return false;
-
-	}
-
 	/**
 	 * Very simple Prime Checker.
 	 * Checks for primality using odd numbers.
@@ -125,13 +100,13 @@ public class Primes {
 	 * @param toCheck
 	 * @return
 	 */
-	private static boolean CheckIfPrimeSimple(long toCheck) {
+	public static boolean checkSimple(long toCheck) {
 
 		// Check for 2
 		if (toCheck == 2) {
 			return true;
 		}
-		
+
 		// Check even numbers
 		if (toCheck % 2 == 0) {
 			return false;
@@ -147,5 +122,84 @@ public class Primes {
 
 		return true;
 	}
+	
+	/**
+	 * Checks using our precomputed array.
+	 * For large numbers, this is not a comprehensive test.
+	 * @param number
+	 * @return
+	 */
+	public static boolean checkQuick(Number number) {
+		int index = 0;
+		
+		// We can make this faster if the number we check is within long range
+		if (number.canBeLong()) {
+			long lNumber = number.longValue();
+			long squareRoot = (long)Math.sqrt(lNumber) + 1;
+			
+			// Check for primality by checking if the number is divisible.
+			while (squareRoot > arr_primes[index] && index < NUM_PRIMES) {
+				if (lNumber % arr_primes[index] == 0) {
+					return false;
+				}
+				index++;
+			}
+			
+		}
+		else {
+			Number squareRoot = number.sqRootCeil();
+			
+			// Check for primality by checking if the number is divisible
+			while (squareRoot.compareTo(arr_primes[index]) == 1 && index < NUM_PRIMES) {
+				if (number.mod(new Number(arr_primes[index])).equals(Number.ZERO)) {
+					return false;
+				}
+				index++;
+			}
+		}
+		
+		// Give a warning to the user if we exhaust the array
+		if (index >= NUM_PRIMES) {
+			System.out.println("Prime number array has been exhausted. Larger check needed.");
+		}
+		
+		// If we reach here, we have either a prime number, or we need a bigger check.
+		return true;
+	}
 
+	/**
+	 * Loads primes from file.
+	 */
+	public static void load() {
+		BufferedReader reader = null;
+		int primes = 0;
+
+		try {
+			for (int index = 0; index < 5; index++) {
+				File file = new File("primes" + (index + 1) + ".txt");
+				reader = new BufferedReader(new FileReader(file));
+
+				String line;
+				while ((line = reader.readLine()) != null) {
+					arr_primes[primes] = Long.parseLong(line);
+					primes++;
+				}
+			}
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		} 
+		finally {
+			try {
+				reader.close();
+			} 
+			catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	public static Number lastPrecomputed() {
+		return new Number(arr_primes[arr_primes.length - 1]);
+	}
 }
