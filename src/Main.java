@@ -2,17 +2,23 @@ import java.util.List;
 
 public class Main {
 	
-	public static final String TEST1 = "32866262297865748";
+	public static final String COMP1 = "32866262297865748";
+	public static final String COMP2 = "4963469855339";
+	
+	public static final String PRIME1 = "2345678917";
+	public static final String PRIME2 = "348116657341";
+	
+	public static final String RSA100 = "15226050279225"
+			+ "3336053561837813263742971806811496138068"
+			+ "8657908494580122963258952897654000350692006139";
 
 	public static void main(String[] args) {
-		Primes.load(); // Always load this
+		//Primes.load(); // Always load this
 		
-		System.out.println(Primes.checkQuick(new Number("348116657341")));
+		//System.out.println(Primes.checkQuick(new Number("348116657341")));
 
-		//TestFactors(TEST1);
-		//TestFactorsSmall(32866262297865748l);
-		//TestFactorial();
-		//TestFactorsFermat(new Number(TEST1));
+		//TestFactorsSmall(4963469855689l);
+		TestFactorsFermat(new Number(COMP1));
 		//TestPrimes();
 	}
 
@@ -100,9 +106,5 @@ public class Main {
 		}
 		System.out.println("Time elapsed: " + ((System.nanoTime() - startTime) / 1_000_000_000d) + " seconds." );
 		
-	}
-	
-	public static void TestFactorial() {
-		System.out.println(Factorial.factorial(new Number("200")));
 	}
 }

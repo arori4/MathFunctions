@@ -104,22 +104,8 @@ public class Number extends BigInteger{
 	}
 
 	public Number sqRootCeil() throws IllegalArgumentException {
-		if (compareTo(ZERO) < 0) {
-			throw new IllegalArgumentException("Negative argument.");
-		}
-
-		// square roots of 0 and 1 are trivial and
-		// y == 0 will cause a divide-by-zero exception
-		if (equals(ZERO) || equals(ONE)) {
-			return this;
-		}
-
-		Number y;
-		// starting with y = x / 2 avoids magnitude issues with x squared
-		for (y = divide(TWO);
-				y.compareTo(divide(y)) > 0;
-				y = ((divide(y)).add(y)).divide(TWO));
-
+		Number y = sqRootFloor();
+		
 		if (compareTo(y.multiply(y)) == 0) {
 			return y;
 		} else {
@@ -132,7 +118,13 @@ public class Number extends BigInteger{
 	 * @return
 	 */
 	public boolean isSquare() {
-		return sqRootCeil().equals(sqRootFloor());
+		Number y = sqRootFloor();
+		
+		if (compareTo(y.multiply(y)) == 0) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 	
 	/**
@@ -220,6 +212,10 @@ public class Number extends BigInteger{
 
 	public Number multiply(Number val) {
 		return new Number( super.multiply(val));
+	}
+	
+	public Number pow(int val) {
+		return new Number (super.pow(val));
 	}
 
 	public Number shiftLeft(int val) {
